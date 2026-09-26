@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#E23D87">
+<title>Hangout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Manrope:wght@400;500;600;700;800&display=swap">
+<style>
+:root{
+  --bg:#FCF2F6; --surface:#FFFFFF; --ink:#3B1733; --muted:#8C6680; --line:#F2D8E4;
+  --accent:#E23D87; --accent-ink:#FFFFFF; --accent-soft:#FFE2EF;
+  --chip:#F8E3EC; --dusk1:#FFB8CC; --dusk2:#FF7EAD; --dusk3:#E23D87; --dusk4:#9E2468;
+  --good:#1F8A5B;
+  --shadow:0 1px 2px rgba(59,23,51,.06),0 8px 24px rgba(226,61,135,.08);
+  --display:"Unbounded","Manrope",system-ui,sans-serif;
+  --body:"Manrope",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#1F1019; --surface:#2B1724; --ink:#FCEAF3; --muted:#CC9DB6; --line:#47263C;
+    --accent:#FF77B0; --accent-ink:#2A0C1B; --accent-soft:#4C1D36;
+    --chip:#3A1F31; --dusk4:#D2589A; --good:#4CC38A;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#1F1019; --surface:#2B1724; --ink:#FCEAF3; --muted:#CC9DB6; --line:#47263C;
+  --accent:#FF77B0; --accent-ink:#2A0C1B; --accent-soft:#4C1D36;
+  --chip:#3A1F31; --dusk4:#D2589A; --good:#4CC38A;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5;padding-inline:16px;padding-block:20px 48px}
+.app{max-width:1320px;margin:0 auto;display:grid;gap:20px}
+header.top{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:2px}
+.logo{font-family:var(--display);font-weight:700;font-size:28px;letter-spacing:-.02em;line-height:1}
+.logo span{color:var(--accent)}
+.tag{color:var(--muted);font-size:14px}
+.tabs{display:inline-flex;background:var(--chip);border-radius:999px;padding:4px;gap:4px}
+.tabs button{border:0;background:transparent;color:var(--muted);font:600 14px var(--body);padding:8px 16px;border-radius:999px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.layout{display:grid;gap:20px;align-items:start}
+@media (min-width:900px){.layout{grid-template-columns:360px 1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:20px;display:grid;gap:18px}
+@media (min-width:900px){.panel{position:sticky;top:calc(env(safe-area-inset-top,0px) + 16px)}}
+.panel h2{font-family:var(--display);font-weight:500;font-size:16px;margin:0}
+.field{display:grid;gap:8px}
+.label{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+.label b{color:var(--ink);letter-spacing:0;text-transform:none;font-size:14px;font-variant-numeric:tabular-nums}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--body);padding:8px 14px;border-radius:12px;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.stepper{display:flex;align-items:center;gap:10px}
+.stepper button{width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:700 18px var(--body);cursor:pointer}
+.stepper button:disabled{opacity:.4;cursor:default}
+.stepper output{min-width:90px;text-align:center;font-weight:700;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.times{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.times label{display:grid;gap:4px;font-size:12px;color:var(--muted)}
+input[type=time],select{width:100%;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 15px var(--body);font-variant-numeric:tabular-nums}
+.go{border:0;background:var(--accent);color:var(--accent-ink);font:700 16px var(--body);padding:14px 18px;border-radius:14px;cursor:pointer}
+.go:hover{filter:brightness(1.05)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.results{display:grid;gap:16px}
+.resHead{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.resHead h1{font-family:var(--display);font-weight:700;font-size:clamp(20px,3.2vw,26px);margin:0;text-wrap:balance;letter-spacing:-.01em}
+.resHead p{margin:0;color:var(--muted);font-size:14px}
+.ghost{border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 14px var(--body);padding:8px 14px;border-radius:12px;cursor:pointer}
+.cards{display:grid;gap:16px}
+@media (min-width:1400px){.cards{grid-template-columns:repeat(3,1fr)}}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column}
+.card.chosen{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.sky{height:6px;background:linear-gradient(90deg,var(--dusk1),var(--dusk2),var(--dusk3),var(--dusk4))}
+.cardBody{padding:18px;display:grid;gap:14px;flex:1;align-content:start}
+.cardTop{display:grid;gap:6px}
+.pill{justify-self:start;font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.card h3{font-family:var(--display);font-weight:500;font-size:18px;margin:0;text-wrap:balance}
+.route{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+ol.tl{list-style:none;margin:0;padding:0;display:grid;gap:0}
+ol.tl li{display:grid;grid-template-columns:52px 14px 1fr;gap:10px;position:relative;padding-bottom:14px}
+ol.tl li:last-child{padding-bottom:0}
+.t{font-weight:800;font-variant-numeric:tabular-nums;font-size:14px;padding-top:1px}
+.dot{width:12px;height:12px;border-radius:50%;margin-top:5px;background:var(--c,var(--accent));position:relative;z-index:1}
+ol.tl li:not(:last-child)::after{content:"";position:absolute;left:67px;top:19px;bottom:-2px;width:2px;background:var(--line)}
+.stop{display:grid;gap:2px;min-width:0}
+.stop strong{font-size:15px}
+.stop span{font-size:13px;color:var(--muted)}
+.meta{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.sum{display:flex;justify-content:space-between;align-items:baseline;gap:8px;padding-top:12px;border-top:1px dashed var(--line);flex-wrap:wrap}
+.sum .big{font-family:var(--display);font-weight:700;font-size:20px;font-variant-numeric:tabular-nums}
+.sum .small{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.actions{display:flex;gap:8px;flex-wrap:wrap;padding:0 18px 18px}
+.actions .go{padding:10px 14px;font-size:14px;border-radius:12px}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:20px;padding:24px;color:var(--muted)}
+.note{font-size:12px;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--surface);padding:10px 16px;border-radius:12px;font-weight:600;font-size:14px;z-index:10}
+.copyBox{width:100%;min-height:120px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:13px var(--body);padding:10px}
+/* surprise */
+.sp{display:grid;gap:12px}
+.mystery{border:1px dashed var(--line);border-radius:16px;padding:14px;display:grid;gap:4px;background:repeating-linear-gradient(-45deg,transparent 0 10px,color-mix(in srgb,var(--chip) 60%,transparent) 10px 20px)}
+.mystery strong{font-family:var(--display);font-weight:500;font-size:15px}
+.revealed{border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;gap:4px;animation:pop .35s ease}
+.revealed .t{color:var(--accent)}
+@keyframes pop{from{transform:scale(.97);opacity:.4}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){.revealed{animation:none}}
+</style>
+
+<style>html{color-scheme:light}body{margin:0;-webkit-text-size-adjust:100%}</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <div class="logo">Hang<span>out</span></div>
+      <div class="tag">Куда пойдём сегодня? Готовый план вечера за 10 секунд.</div>
+    </div>
+    <div class="tabs" role="tablist">
+      <button id="tabPlan" role="tab" aria-selected="true">Сценарии</button>
+      <button id="tabSurprise" role="tab" aria-selected="false">Surprise me</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <form class="panel" id="form" autocomplete="off">
+      <h2 id="formTitle">Параметры встречи</h2>
+
+      <div class="field" data-plan-only>
+        <div class="label">Кто идёт</div>
+        <div class="seg" id="who">
+          <button type="button" data-v="solo">Один</button>
+          <button type="button" data-v="pair">Пара</button>
+          <button type="button" data-v="friends">Друзья</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="label">Количество</div>
+        <div class="stepper">
+          <button type="button" id="minus" aria-label="Меньше">−</button>
+          <output id="countOut">4 человека</output>
+          <button type="button" id="plus" aria-label="Больше">+</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="label">Бюджет с человека <b id="budgetOut">до 2 500 ₽</b></div>
+        <input type="range" id="budget" min="500" max="6000" step="100" value="2500">
+      </div>
+
+      <div class="field">
+        <div class="label">Время</div>
+        <div class="times">
+          <label for="from">С<input type="time" id="from" value="18:00"></label>
+          <label for="to">До<input type="time" id="to" value="23:00"></label>
+        </div>
+      </div>
+
+      <div class="field" data-plan-only>
+        <div class="label">Настроение</div>
+        <div class="seg" id="mood">
+          <button type="button" data-v="active">Активно</button>
+          <button type="button" data-v="calm">Спокойно</button>
+          <button type="button" data-v="unusual">Необычно</button>
+          <button type="button" data-v="romantic">Романтично</button>
+          <button type="button" data-v="party">Вечеринка</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="label" for="loc">Локация</label>
+        <select id="loc">
+          <option>Центр Москвы</option>
+          <option>Китай-город</option>
+          <option>Патриаршие</option>
+          <option>Хамовники</option>
+          <option>Замоскворечье</option>
+          <option>Курская и Артплей</option>
+          <option>Белорусская</option>
+        </select>
+      </div>
+
+      <button class="go" type="submit" id="goBtn">Составить 3 сценария</button>
+      <div class="note">Демо-версия: места в сценариях условные, цены примерные для Москвы.</div>
+    </form>
+
+    <section class="results" id="results" aria-live="polite"></section>
+  </div>
+</div>
+
+<script>
+(function(){
+const KIND = {food:"Поесть", act:"Занятие", drink:"Завершить вечер"};
+// price: ₽ на человека, dur: минуты
+const CATALOG = [
+ {id:"f1",k:"food",n:"Грузинское кафе",d:"Хинкали и хачапури на всю компанию",p:1100,dur:75,t:["friends","calm","party"]},
+ {id:"f2",k:"food",n:"Паназиатский стритфуд",d:"Лапша в коробочках, быстро и сытно",p:700,dur:45,t:["active","friends","solo"]},
+ {id:"f3",k:"food",n:"Траттория со свечами",d:"Паста, вино, приглушённый свет",p:1800,dur:90,t:["romantic","calm","pair"]},
+ {id:"f4",k:"food",n:"Гастромаркет",d:"Десяток кухонь под одной крышей, каждый берёт своё",p:900,dur:60,t:["unusual","friends","active","party"]},
+ {id:"f5",k:"food",n:"Вегетарианское бистро",d:"Боулы, супы и домашние лимонады",p:850,dur:60,t:["calm","solo","pair"]},
+ {id:"f6",k:"food",n:"Ужин в полной темноте",d:"Официанты ведут за руку, блюда угадываете на вкус",p:2400,dur:90,t:["unusual","romantic","pair"]},
+ {id:"f7",k:"food",n:"Бургерная с автоматами",d:"Бургеры и старые игровые автоматы",p:800,dur:60,t:["active","party","friends"]},
+ {id:"f8",k:"food",n:"Пельменная у метро",d:"Недорого, быстро, по-домашнему",p:500,dur:40,t:["calm","solo","friends"]},
+ {id:"f9",k:"food",n:"Корейское барбекю",d:"Жарите мясо сами прямо за столом",p:1600,dur:90,t:["friends","unusual","party"]},
+
+ {id:"a1",k:"act",n:"Боулинг",d:"Дорожка на компанию, обувь включена",p:700,dur:90,t:["active","friends","party"]},
+ {id:"a2",k:"act",n:"Квест-комната",d:"Час, чтобы выбраться из запертой комнаты",p:1200,dur:60,t:["active","unusual","friends"]},
+ {id:"a3",k:"act",n:"Караоке-кабинка",d:"Отдельная комната, без чужих зрителей",p:900,dur:90,t:["party","friends"]},
+ {id:"a4",k:"act",n:"Кино",d:"Вечерний сеанс, места в последнем ряду",p:550,dur:130,t:["calm","romantic","pair","solo"]},
+ {id:"a5",k:"act",n:"Выставка современного искусства",d:"Вечерние часы работы, мало людей",p:600,dur:75,t:["unusual","calm","solo","pair"]},
+ {id:"a6",k:"act",n:"Иммерсивный спектакль",d:"Зрители ходят по особняку вместе с актёрами",p:2200,dur:120,t:["unusual","romantic","pair"]},
+ {id:"a7",k:"act",n:"Батутный центр",d:"Час прыжков, поролоновая яма",p:800,dur:60,t:["active","friends"]},
+ {id:"a8",k:"act",n:"Скалодром",d:"Инструктаж и трассы для новичков",p:1000,dur:90,t:["active","solo","friends"]},
+ {id:"a9",k:"act",n:"Мастер-класс по керамике",d:"Гончарный круг, чашку заберёте после обжига",p:1900,dur:120,t:["calm","unusual","romantic","pair","solo"]},
+ {id:"a10",k:"act",n:"Прогулка по набережной",d:"Бесплатно, с видом на огни города",p:0,dur:50,t:["calm","romantic","pair","solo"]},
+ {id:"a11",k:"act",n:"Смотровая площадка",d:"Москва сверху, лучше всего после заката",p:500,dur:45,t:["romantic","unusual","pair"]},
+ {id:"a12",k:"act",n:"Антикафе с настолками",d:"Платите за время, игры и чай бесплатно",p:600,dur:120,t:["calm","friends"]},
+ {id:"a13",k:"act",n:"Стендап-вечер",d:"Открытый микрофон, новые комики",p:700,dur:90,t:["party","unusual","friends","pair"]},
+ {id:"a14",k:"act",n:"Планетарий",d:"Сеанс под куполом о звёздном небе",p:900,dur:60,t:["unusual","romantic","calm","pair","solo"]},
+ {id:"a15",k:"act",n:"Речной трамвайчик",d:"Вечерний рейс по Москве-реке",p:1200,dur:90,t:["romantic","calm","pair","friends"]},
+ {id:"a16",k:"act",n:"VR-клуб",d:"Командные игры в виртуальной реальности",p:1300,dur:60,t:["active","unusual","friends"]},
+ {id:"a17",k:"act",n:"Пинг-понг бар",d:"Столы для тенниса и музыка",p:600,dur:60,t:["active","party","friends"]},
+
+ {id:"d1",k:"drink",n:"Коктейльный бар",d:"Авторские коктейли, нужна бронь на выходные",p:1200,dur:90,t:["party","romantic","friends"]},
+ {id:"d2",k:"drink",n:"Крафтовый бар",d:"20 кранов пива и сидры",p:900,dur:90,t:["friends","party","calm"]},
+ {id:"d3",k:"drink",n:"Чайная с церемонией",d:"Пуэры, улуны и тишина",p:700,dur:60,t:["calm","unusual","solo","pair"]},
+ {id:"d4",k:"drink",n:"Десертная кофейня",d:"Кофе и пирожные до полуночи",p:500,dur:45,t:["calm","romantic","solo","pair"]},
+ {id:"d5",k:"drink",n:"Джаз-клуб",d:"Живой концерт, столики у сцены",p:1500,dur:100,t:["romantic","calm","pair"]},
+ {id:"d6",k:"drink",n:"Клуб с диджеем",d:"Танцы до утра, вход до 23:00 дешевле",p:1500,dur:120,t:["party","active","friends"]},
+ {id:"d7",k:"drink",n:"Спикизи-бар",d:"Вход через «секретную» дверь",p:1400,dur:75,t:["unusual","romantic","party"]},
+ {id:"d8",k:"drink",n:"Руфтоп-бар",d:"Терраса на крыше с пледами",p:1300,dur:75,t:["romantic","party","pair"]}
+];
+const MOODS = {active:"Активно",calm:"Спокойно",unusual:"Необычно",romantic:"Романтично",party:"Вечеринка"};
+const WHO_T = {solo:"для себя",pair:"вдвоём",friends:"с друзьями"};
+const MOOD_T = {active:"Активный вечер",calm:"Спокойный вечер",unusual:"Необычный вечер",romantic:"Романтический вечер",party:"Вечер-вечеринка"};
+const DUSK = ["var(--dusk1)","var(--dusk2)","var(--dusk3)","var(--dusk4)"];
+const TRAVEL = 20, GATHER = 30;
+
+const $ = s => document.querySelector(s);
+const fmt = n => n.toLocaleString("ru-RU").replace(/ /g," ");
+const rub = n => fmt(n)+" ₽";
+const toMin = s => { const [h,m]=s.split(":").map(Number); return h*60+m; };
+const hhmm = m => { m=((m%1440)+1440)%1440; return String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0"); };
+const round5 = m => Math.ceil(m/5)*5;
+const plural = (n,a,b,c) => { const m10=n%10,m100=n%100; return m10===1&&m100!==11?a:(m10>=2&&m10<=4&&(m100<10||m100>=20)?b:c); };
+const pick = a => a[Math.floor(Math.random()*a.length)];
+
+let state = {tab:"plan", who:"friends", count:4, budget:2500, from:"18:00", to:"23:00", mood:"active", loc:"Центр Москвы"};
+try{ const s=JSON.parse(localStorage.getItem("hangout-form")||"null"); if(s) state=Object.assign(state,s,{tab:"plan"}); }catch(e){}
+const save = () => { try{ localStorage.setItem("hangout-form",JSON.stringify(state)); }catch(e){} };
+
+function templates(win){
+  if(win>=270) return [["food","act","drink"],["act","food","drink"],["food","act","act"],["act","act","drink"],["food","act","drink"]];
+  if(win>=160) return [["food","act"],["act","drink"],["food","drink"],["act","food"]];
+  return [["act"],["food"],["drink"]];
+}
+
+function buildCandidates(p, opts){
+  const start=toMin(p.from); let end=toMin(p.to); if(end<=start) end+=1440;
+  const win=end-start-GATHER;
+  const tpl=templates(end-start);
+  const out=[]; const seen=new Set();
+  for(let i=0;i<1500;i++){
+    const t=pick(tpl); const used=new Set(); const items=[];
+    for(const k of t){
+      const pool=CATALOG.filter(c=>c.k===k&&!used.has(c.id));
+      const it=pick(pool); used.add(it.id); items.push(it);
+    }
+    const key=items.map(x=>x.id).join("-"); if(seen.has(key)) continue; seen.add(key);
+    const cost=items.reduce((s,x)=>s+x.p,0);
+    const dur=items.reduce((s,x)=>s+x.dur,0)+TRAVEL*(items.length-1);
+    if(cost>p.budget||dur>win) continue;
+    let score=0;
+    for(const it of items){
+      if(opts.mood && it.t.includes(opts.mood)) score+=3;
+      if(opts.who && it.t.includes(opts.who)) score+=1.2;
+    }
+    if(opts.who==="solo" && items.some(x=>x.id==="a3"||x.id==="a1")) score-=3;
+    score+= (cost/p.budget)*1 + (dur/win)*1.5 + Math.random()*2.2;
+    out.push({items,cost,dur,score});
+  }
+  return out.sort((a,b)=>b.score-a.score);
+}
+
+function schedule(sc, from){
+  let t=toMin(from)+GATHER;
+  return sc.items.map((it,i)=>{ const s=round5(t); t=s+it.dur+TRAVEL; return {...it,start:s,end:s+it.dur,c:DUSK[Math.min(i,3)]}; });
+}
+
+function pickThree(cands){
+  const res=[];
+  const distinct=c=>{ const ids=new Set(c.items.map(x=>x.id)); return res.every(r=>r.items.every(x=>!ids.has(x.id))); };
+  if(cands[0]) res.push(cands[0]);
+  const budget=state.budget;
+  const cheap=cands.find(c=>c.cost<=cands[0]?.cost-400 && distinct(c)); if(cheap) res.push(cheap);
+  for(const c of cands){
+    if(res.length===3) break;
+    const ids=new Set(c.items.map(x=>x.id));
+    if(res.every(r=>r.items.filter(x=>ids.has(x.id)).length===0)) res.push(c);
+  }
+  for(const c of cands){ if(res.length===3) break; if(!res.includes(c)) res.push(c); }
+  return res;
+}
+
+let lastPlans=[]; let chosen=-1;
+
+function titleFor(sc,i,all){
+  const counts={}; sc.items.forEach(it=>it.t.forEach(x=>{ if(MOODS[x]) counts[x]=(counts[x]||0)+1; }));
+  const dom = counts[state.mood] ? state.mood : Object.keys(counts).sort((a,b)=>counts[b]-counts[a])[0]||state.mood;
+  const names=[MOOD_T[dom]+" "+WHO_T[state.who], null, null];
+  if(i===0) return names[0];
+  const alt={active:["Движение без пауз","Энергичная пятница"],calm:["Без спешки","Уютный вечер"],unusual:["Что-то новенькое","Вечер открытий"],romantic:["Вечер для двоих","Огни города"],party:["Громкая пятница","До последнего трека"]};
+  return (alt[dom]||["Альтернатива","Ещё вариант"])[i-1];
+}
+
+function pillFor(sc,all){
+  const costs=all.map(x=>x.cost), mn=Math.min(...costs), mx=Math.max(...costs);
+  if(mx-mn>=300){ if(sc.cost===mn) return "Экономный"; if(sc.cost===mx) return "С размахом"; return "Золотая середина"; }
+  return ["Лучшее совпадение","Альтернатива","Ещё вариант"][all.indexOf(sc)];
+}
+
+function planText(sc){
+  const st=schedule(sc,state.from);
+  const lines=st.map(s=>`${hhmm(s.start)} — ${s.n.toLowerCase()} (${s.p?"~"+rub(s.p):"бесплатно"})`);
+  return `Предлагаю план на вечер (${state.loc}):\n`+lines.join("\n")+`\nПримерно ${rub(sc.cost)} на человека. Идём?`;
+}
+
+function renderPlans(){
+  const r=$("#results");
+  if(!lastPlans.length){
+    r.innerHTML=`<div class="resHead"><h1>Не получилось собрать вечер</h1></div><div class="empty">С такими параметрами ничего не помещается. Попробуйте увеличить бюджет или расширить время: для трёх мест нужно примерно 4,5 часа.</div>`;
+    return;
+  }
+  const people=state.count;
+  r.innerHTML=`
+   <div class="resHead">
+     <div><h1>3 плана на вечер</h1><p>${state.loc} · ${state.from}–${state.to} · до ${rub(state.budget)} с человека · ${MOODS[state.mood].toLowerCase()}</p></div>
+     <button class="ghost" type="button" id="reroll">Другие варианты</button>
+   </div>
+   <div class="cards">${lastPlans.map((sc,i)=>{
+     const st=schedule(sc,state.from);
+     return `<article class="card${chosen===i?" chosen":""}">
+       <div class="sky"></div>
+       <div class="cardBody">
+         <div class="cardTop"><span class="pill">${pillFor(sc,lastPlans)}</span><h3>«${titleFor(sc,i,lastPlans)}»</h3>
+           <div class="route">${st.map(s=>hhmm(s.start)).join(" → ")}</div></div>
+         <ol class="tl">${st.map(s=>`<li style="--c:${s.c}"><div class="t">${hhmm(s.start)}</div><div class="dot"></div>
+           <div class="stop"><strong>${s.n}</strong><span>${s.d}</span><div class="meta">${KIND[s.k]} · ${s.dur} мин · ${s.p?"~"+rub(s.p):"бесплатно"}</div></div></li>`).join("")}</ol>
+         <div class="sum"><div><div class="small">Примерный бюджет</div><div class="big">${rub(sc.cost)}<span class="small"> на человека</span></div></div>
+           ${people>1?`<div class="small">≈ ${rub(sc.cost*people)} на ${people}</div>`:""}</div>
+         <div class="meta">Окончание около ${hhmm(st[st.length-1].end)}</div>
+       </div>
+       <div class="actions">
+         <button class="go" type="button" data-choose="${i}">${chosen===i?"Выбрано":"Выбрать этот план"}</button>
+         <button class="ghost" type="button" data-copy="${i}">Скопировать для чата</button>
+       </div>
+       <div data-fallback="${i}" hidden style="padding:0 18px 18px"></div>
+     </article>`;}).join("")}</div>`;
+  $("#reroll").onclick=()=>generate();
+  r.querySelectorAll("[data-choose]").forEach(b=>b.onclick=()=>{ chosen=+b.dataset.choose; renderPlans(); toast("План выбран. Скопируйте его и отправьте друзьям"); });
+  r.querySelectorAll("[data-copy]").forEach(b=>b.onclick=()=>copyText(planText(lastPlans[+b.dataset.copy]), r.querySelector(`[data-fallback="${b.dataset.copy}"]`)));
+}
+
+function copyText(txt, box){
+  const fallback=()=>{ box.hidden=false; box.innerHTML=`<textarea class="copyBox" readonly>${txt}</textarea><div class="note">Выделите текст и скопируйте вручную.</div>`; const ta=box.querySelector("textarea"); ta.focus(); ta.select(); };
+  try{ navigator.clipboard.writeText(txt).then(()=>toast("План скопирован"),fallback); }catch(e){ fallback(); }
+}
+
+let toastT;
+function toast(msg){
+  let el=$(".toast"); if(!el){ el=document.createElement("div"); el.className="toast"; document.body.appendChild(el); }
+  el.textContent=msg; el.hidden=false; clearTimeout(toastT); toastT=setTimeout(()=>el.hidden=true,2200);
+}
+
+function generate(){
+  chosen=-1;
+  lastPlans=pickThree(buildCandidates(state,{mood:state.mood,who:state.who}));
+  renderPlans();
+}
+
+// ---------- Surprise ----------
+let surprise=null;
+function generateSurprise(){
+  const who = state.count===1?"solo":state.count===2?"pair":"friends";
+  const mood = pick(Object.keys(MOODS));
+  const c=buildCandidates(state,{mood,who});
+  surprise = c.length ? {sc:c[Math.floor(Math.random()*Math.min(5,c.length))], open:1} : null;
+  renderSurprise();
+}
+function hint(s){
+  const h={food:"Будет вкусно",act:"Будет чем заняться",drink:"Финал вечера"}[s.k];
+  const mood=s.t.find(x=>MOODS[x]);
+  return `${h} · настроение «${MOODS[mood].toLowerCase()}» · ${s.dur} мин · ${s.p?"до "+rub(Math.ceil(s.p/500)*500):"бесплатно"}`;
+}
+function renderSurprise(){
+  const r=$("#results");
+  if(!surprise){ r.innerHTML=`<div class="resHead"><h1>Сюрприз не собрался</h1></div><div class="empty">Добавьте бюджета или времени, и попробуем снова.</div>`; return; }
+  const st=schedule(surprise.sc,state.from);
+  const all=surprise.open>=st.length;
+  r.innerHTML=`
+   <div class="resHead"><div><h1>Ваш маршрут-сюрприз</h1><p>${state.loc} · ${state.from}–${state.to} · до ${rub(state.budget)} с человека. Места открываются по одному.</p></div>
+   <button class="ghost" type="button" id="newSp">Новый сюрприз</button></div>
+   <article class="card"><div class="sky"></div><div class="cardBody sp">
+   ${st.map((s,i)=> i<surprise.open
+     ? `<div class="revealed"><div class="t">${hhmm(s.start)} · шаг ${i+1} из ${st.length}</div><strong style="font-size:17px">${s.n}</strong><span style="color:var(--muted);font-size:14px">${s.d}</span><div class="meta">${KIND[s.k]} · ${s.dur} мин · ${s.p?"~"+rub(s.p):"бесплатно"}</div></div>`
+     : `<div class="mystery"><div class="meta">${hhmm(s.start)} · шаг ${i+1} из ${st.length}</div><strong>Пока секрет</strong><div class="meta">${hint(s)}</div></div>`).join("")}
+   <div class="sum"><div><div class="small">Весь маршрут</div><div class="big">${all?rub(surprise.sc.cost):"≈ ? ₽"}<span class="small"> на человека</span></div></div><div class="small">в рамках ${rub(state.budget)}</div></div>
+   </div>
+   <div class="actions">${all?`<button class="go" type="button" id="spCopy">Скопировать маршрут</button>`:`<button class="go" type="button" id="spNext">Открыть следующее место</button>`}</div>
+   <div id="spFallback" hidden style="padding:0 18px 18px"></div></article>`;
+  $("#newSp").onclick=generateSurprise;
+  if(all) $("#spCopy").onclick=()=>copyText(planText(surprise.sc),$("#spFallback"));
+  else $("#spNext").onclick=()=>{ surprise.open++; renderSurprise(); };
+}
+
+// ---------- Form wiring ----------
+function syncForm(){
+  document.querySelectorAll("#who button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===state.who));
+  document.querySelectorAll("#mood button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===state.mood));
+  $("#countOut").textContent=state.count+" "+plural(state.count,"человек","человека","человек");
+  $("#minus").disabled=state.count<=1; $("#plus").disabled=state.count>=12;
+  $("#budget").value=state.budget; $("#budgetOut").textContent="до "+rub(state.budget);
+  $("#from").value=state.from; $("#to").value=state.to; $("#loc").value=state.loc;
+  const sp=state.tab==="surprise";
+  document.querySelectorAll("[data-plan-only]").forEach(e=>e.hidden=sp);
+  $("#goBtn").textContent=sp?"Удиви меня":"Составить 3 сценария";
+  $("#formTitle").textContent=sp?"Бюджет и время, остальное за нами":"Параметры встречи";
+  $("#tabPlan").setAttribute("aria-selected",!sp); $("#tabSurprise").setAttribute("aria-selected",sp);
+}
+$("#who").onclick=e=>{ const v=e.target.dataset.v; if(!v) return; state.who=v;
+  if(v==="solo") state.count=1; else if(v==="pair") state.count=2; else if(state.count<3) state.count=4; syncForm(); save(); };
+$("#mood").onclick=e=>{ const v=e.target.dataset.v; if(!v) return; state.mood=v; syncForm(); save(); };
+const setCount=n=>{ state.count=Math.max(1,Math.min(12,n)); state.who=state.count===1?"solo":state.count===2&&state.who!=="friends"?"pair":state.count>2?"friends":state.who; syncForm(); save(); };
+$("#minus").onclick=()=>setCount(state.count-1);
+$("#plus").onclick=()=>setCount(state.count+1);
+$("#budget").oninput=e=>{ state.budget=+e.target.value; syncForm(); save(); };
+$("#from").onchange=e=>{ state.from=e.target.value||"18:00"; save(); };
+$("#to").onchange=e=>{ state.to=e.target.value||"23:00"; save(); };
+$("#loc").onchange=e=>{ state.loc=e.target.value; save(); };
+$("#form").onsubmit=e=>{ e.preventDefault(); state.tab==="surprise"?generateSurprise():generate(); };
+$("#tabPlan").onclick=()=>{ state.tab="plan"; syncForm(); generate(); };
+$("#tabSurprise").onclick=()=>{ state.tab="surprise"; syncForm(); generateSurprise(); };
+
+syncForm(); generate();
+})();
+</script>
+
+</body>
+</html>
